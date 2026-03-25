@@ -17,21 +17,33 @@ let apiKeys = [];
 
 // Danh sách các đường dẫn có thể chứa gemini-keys.json
 const possibleKeyPaths = [
+  '/etc/secrets/gemini-keys.json',                         // Render/Railway secrets (ưu tiên)
   path.join(__dirname, '..', 'gemini-keys.json'),          // Thư mục gốc của app
-  '/etc/secrets/gemini-keys.json',                         // Railway secrets
   path.join(process.cwd(), 'gemini-keys.json'),            // Working directory
+  '/opt/render/project/gemini-keys.json',                  // Render root
 ];
+
+console.log(`[Boruto] Đang tìm API keys...`);
+console.log(`[Boruto] __dirname: ${__dirname}`);
+console.log(`[Boruto] process.cwd(): ${process.cwd()}`);
 
 for (const keysPath of possibleKeyPaths) {
   try {
+    console.log(`[Boruto] Kiểm tra: ${keysPath} - exists: ${fs.existsSync(keysPath)}`);
     if (fs.existsSync(keysPath)) {
       const keysData = fs.readFileSync(keysPath, 'utf8');
-      apiKeys = JSON.parse(keysData);
-      console.log(`[Boruto] Đã load ${apiKeys.length} API keys từ: ${keysPath}`);
-      break;
+      console.log(`[Boruto] Nội dung file (${keysPath}): ${keysData.substring(0, 100)}...`);
+      const parsed = JSON.parse(keysData);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        apiKeys = parsed;
+        console.log(`[Boruto] ✅ Đã load ${apiKeys.length} API keys từ: ${keysPath}`);
+        break;
+      } else {
+        console.log(`[Boruto] ⚠️ File không phải mảng hoặc rỗng: ${keysPath}`);
+      }
     }
   } catch (error) {
-    // Tiếp tục thử đường dẫn tiếp theo
+    console.error(`[Boruto] Lỗi parse ${keysPath}:`, error.message);
   }
 }
 
@@ -42,7 +54,7 @@ if (apiKeys.length === 0 && process.env.GOOGLE_API_KEY) {
 }
 
 if (apiKeys.length === 0) {
-  console.error("[Boruto] KHÔNG CÓ API KEY! Vui lòng kiểm tra gemini-keys.json hoặc GOOGLE_API_KEY trong .env");
+  console.error("[Boruto] ❌ KHÔNG CÓ API KEY! Vui lòng kiểm tra gemini-keys.json hoặc GOOGLE_API_KEY trong .env");
 }
 let currentKeyIndex = 0;
 
