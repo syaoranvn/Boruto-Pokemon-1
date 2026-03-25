@@ -443,4 +443,5 @@ server.listen(PORT, () => {
 });
 
 // Đăng nhập bằng Token từ file .env
+console.log(`[Boruto] DISCORD_TOKEN: ${process.env.DISCORD_TOKEN ? 'có giá trị (length: ' + process.env.DISCORD_TOKEN.length + ')' : 'KHÔNG CÓ'}`);
 client.login(process.env.DISCORD_TOKEN);
