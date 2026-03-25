@@ -443,5 +443,15 @@ server.listen(PORT, () => {
 });
 
 // Đăng nhập bằng Token từ file .env
-console.log(`[Boruto] DISCORD_TOKEN: ${process.env.DISCORD_TOKEN ? 'có giá trị (length: ' + process.env.DISCORD_TOKEN.length + ')' : 'KHÔNG CÓ'}`);
-client.login(process.env.DISCORD_TOKEN);
+const token = process.env.DISCORD_TOKEN;
+if (token) {
+  console.log(`[Boruto] DISCORD_TOKEN: có giá trị (length: ${token.length})`);
+  console.log(`[Boruto] Token preview: "${token.substring(0, 10)}...${token.substring(token.length - 5)}"`);
+  // Kiểm tra token có khoảng trắng hoặc ký tự xuống dòng không
+  if (token.includes(' ') || token.includes('\n') || token.includes('\r')) {
+    console.error('[Boruto] ❌ Token chứa khoảng trắng hoặc ký tự xuống dòng!');
+  }
+} else {
+  console.log('[Boruto] DISCORD_TOKEN: KHÔNG CÓ');
+}
+client.login(token);
