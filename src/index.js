@@ -1,8 +1,26 @@
-require('dotenv').config();
 const { Client, GatewayIntentBits } = require('discord.js');
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const fs = require('fs');
 const path = require('path');
+
+// ====== LOAD .ENV TỪ NHIỀU ĐƯỜNG DẪN ======
+const dotenv = require('dotenv');
+
+const possibleEnvPaths = [
+  '/etc/secrets/.env',                                    // Render/Railway secrets
+  path.join(__dirname, '..', '.env'),                      // Thư mục gốc của app
+  path.join(__dirname, '..', '.ENV'),                      // Thư mục gốc (viết hoa)
+  path.join(process.cwd(), '.env'),                        // Working directory
+  '/opt/render/project/.env',                              // Render root
+];
+
+for (const envPath of possibleEnvPaths) {
+  if (fs.existsSync(envPath)) {
+    dotenv.config({ path: envPath });
+    console.log(`[Boruto] ✅ Đã load .env từ: ${envPath}`);
+    break;
+  }
+}
 
 // ====== CẤU HÌNH HỆ THỐNG NÂNG CAO ======
 const OWNER_ID = process.env.OWNER_ID || "411001618662686721"; // Minh Chủ MrBaii
