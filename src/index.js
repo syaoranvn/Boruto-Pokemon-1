@@ -34,12 +34,21 @@ for (const keysPath of possibleKeyPaths) {
       const keysData = fs.readFileSync(keysPath, 'utf8');
       console.log(`[Boruto] Nội dung file (${keysPath}): ${keysData.substring(0, 100)}...`);
       const parsed = JSON.parse(keysData);
+      
+      // Hỗ trợ cả 2 format:
+      // 1. Array đơn giản: ["key1", "key2"]
+      // 2. Object với keys array: { "keys": ["key1", "key2"], "currentIndex": 0 }
       if (Array.isArray(parsed) && parsed.length > 0) {
         apiKeys = parsed;
-        console.log(`[Boruto] ✅ Đã load ${apiKeys.length} API keys từ: ${keysPath}`);
+        console.log(`[Boruto] ✅ Đã load ${apiKeys.length} API keys (array format) từ: ${keysPath}`);
+        break;
+      } else if (parsed.keys && Array.isArray(parsed.keys) && parsed.keys.length > 0) {
+        apiKeys = parsed.keys;
+        currentKeyIndex = parsed.currentIndex || 0;
+        console.log(`[Boruto] ✅ Đã load ${apiKeys.length} API keys (object format) từ: ${keysPath}, currentIndex: ${currentKeyIndex}`);
         break;
       } else {
-        console.log(`[Boruto] ⚠️ File không phải mảng hoặc rỗng: ${keysPath}`);
+        console.log(`[Boruto] ⚠️ File không đúng format: ${keysPath}`);
       }
     }
   } catch (error) {
