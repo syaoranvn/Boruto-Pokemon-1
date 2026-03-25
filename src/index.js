@@ -14,6 +14,7 @@ const BLACKLIST_NAMES = ["default", "shinei", "defau", "firered", "tako", "phong
 
 // Load API Keys từ file gemini-keys.json
 let apiKeys = [];
+let currentKeyIndex = 0;
 
 // Danh sách các đường dẫn có thể chứa gemini-keys.json
 const possibleKeyPaths = [
@@ -65,7 +66,6 @@ if (apiKeys.length === 0 && process.env.GOOGLE_API_KEY) {
 if (apiKeys.length === 0) {
   console.error("[Boruto] ❌ KHÔNG CÓ API KEY! Vui lòng kiểm tra gemini-keys.json hoặc GOOGLE_API_KEY trong .env");
 }
-let currentKeyIndex = 0;
 
 // ====== HỆ THỐNG MEMORY NÂNG CAO ======
 const conversationMemory = new Map(); // Lưu lịch sử hội thoại theo userId
