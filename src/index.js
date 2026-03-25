@@ -402,5 +402,27 @@ function isUnknownAnswer(answer) {
   return unknownPhrases.some(p => lower.includes(p));
 }
 
+// ====== HTTP SERVER (để Render detect port) ======
+const http = require('http');
+const PORT = process.env.PORT || 3000;
+
+const server = http.createServer((req, res) => {
+  if (req.url === '/health' || req.url === '/') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ 
+      status: 'online', 
+      bot: client.user?.tag || 'starting...',
+      uptime: process.uptime()
+    }));
+  } else {
+    res.writeHead(404);
+    res.end('Not Found');
+  }
+});
+
+server.listen(PORT, () => {
+  console.log(`[Boruto] HTTP server đang chạy trên port ${PORT}`);
+});
+
 // Đăng nhập bằng Token từ file .env
 client.login(process.env.DISCORD_TOKEN);
